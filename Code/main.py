@@ -8,7 +8,7 @@ def pobl_ini(poblacion):
     for i in range(100):
         individuo = []
         for j in range(7):
-            individuo.append(randint(-100, 100))
+            individuo.append(randint(-10, 10))
         poblacion.append(individuo)
         j=0
 
@@ -18,13 +18,14 @@ def leer_csv():
 
 
 #Funcion para evaluar los datos en las funciones 
-def eval_datos():
-    #y = 0
-    print("datos evaluados")
+def eval_datos(dat, pobl):
+    y = pobl[0]* dat[0]**6 + pobl[1]* dat[0]**5 + pobl[2]* dat[0]**4 + pobl[3]* dat[0]**3 + pobl[4]* dat[0]**2 +pobl[5]* dat[0] + pobl[6]
+    err = (abs(y - dat[1])/dat[1])*100
+    return err
 
 
 #Funcion para escoger los miembros mas aptos de la poblacion (50% del total)
-def selec_indi():
+def selec_indi(cantidad):
     print("Individuos seleccionados")
 
 
@@ -36,26 +37,39 @@ def cruce():
 #Funcion para
 
 def main():
-    timeout = time.time() + 60*5   # 5 minutes from now
+    timeout = time.time() + 60*5   # 5 minutos desde ahora
 
     poblacion = []
     
     #funcion para cargar los datos del excel
     leer_csv()
 
+    datos = [[1,2], [2,5]]
+
+    errores = []
+
     #llamar función poblacion inicial (crea arrelgo de arreglos)
     pobl_ini(poblacion)
 
     while True:
+        error = 0
         test = 0
         if time.time() > timeout:
             break
 
-        #llamar funcion para evaluar datos del excel 
-        eval_datos()
+        #llamar funcion para evaluar datos del excel
+        i = 0
+        j = 0
+        for i in range(len(poblacion)):
+            for j in range(len(datos)):
+                error += eval_datos(datos[j], poblacion[i])
+            error = error/(len(datos))
+            errores.append(error)
+        
 
         #llamar funcion para escoger 50% mejor 
-        selec_indi()
+        cinco = selec_indi(5, poblacion)
+        mitad = selec_indi(len(poblacion)/2, poblacion)
 
         #llamar funcion para cruzar
         cruce()
