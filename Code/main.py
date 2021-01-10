@@ -5,7 +5,7 @@ from random import randint
 def pobl_ini(poblacion):
     i = 0
     j = 0
-    for i in range(100):
+    for i in range(6):
         individuo = []
         for j in range(7):
             individuo.append(randint(-10, 10))
@@ -25,8 +25,29 @@ def eval_datos(dat, pobl):
 
 
 #Funcion para escoger los miembros mas aptos de la poblacion (50% del total)
-def selec_indi(cantidad):
+def selec_indi(cantidad, poblacion, errores):
     print("Individuos seleccionados")
+    mejores_indi = []
+    mejores_err = []
+
+    temporal = errores[0]
+    posicion = 0
+
+    i = 0
+    j = 0
+
+    while i < cantidad:
+        temporal = errores[0]
+        posicion = 0
+        for j in range(len(poblacion)):
+            if errores[j] < temporal:
+                temporal = errores[j]
+                posicion = j
+        mejores_indi.append(poblacion.pop(posicion))
+        mejores_err.append(errores.pop(posicion))
+        i += 1
+    
+    return mejores_indi, mejores_err
 
 
 #Funcion para realizar el cruce de los individuos
@@ -68,8 +89,9 @@ def main():
         
 
         #llamar funcion para escoger 50% mejor 
-        cinco = selec_indi(5, poblacion)
-        mitad = selec_indi(len(poblacion)/2, poblacion)
+        cinco, err = selec_indi(5, list(poblacion), list(errores))
+
+        poblacion, err = selec_indi(len(poblacion)/2, list(poblacion), list(errores))
 
         #llamar funcion para cruzar
         cruce()
