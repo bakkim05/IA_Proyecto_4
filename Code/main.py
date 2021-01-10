@@ -51,12 +51,77 @@ def selec_indi(cantidad, poblacion, errores):
 
 
 #Funcion para realizar el cruce de los individuos
-def cruce():
-    print("individuos cruzados")
+def cruce(x,y):
+
+    padres, madres = padres_madres(x, y)
+
+    padre = []
+    madre = []
+    hijo1 = []
+    hijo2 = []
+    hijos = []
+
+    if len(padres) != len(madres):
+        "No hay misma cantidad de padres y madres"
+    
+    n = len(padres)
+
+    for i in range(n):
+        padre = padres.pop(0)
+        madre = madres.pop(0)
+
+        for j in range(len(padre)):
+            if (j % 2) == 0:
+                hijo1.append(padre[j])
+                hijo2.append(madre[j])
+                if j != 6:
+                    hijo1.append(madre[j+1])
+                    hijo2.append(padre[j+1])
+              
+        hijos.append(hijo1)
+        hijo1 = []
+        hijos.append(hijo2)
+        hijo2 = []
+        
+    return hijos
+
+#Funcion para separar la población en padres y madres
+def padres_madres(pobla, errs):
+    mejores1 = []
+    mejores2 = []
+
+    n = len(pobla)
+
+    cont = 1
+
+    for i in range(n):
+        if (cont % 2) ==  1:
+            ind = pos(errs)
+            mejores1.append(pobla.pop(ind))
+            errs.pop(ind)
+            cont += 1
+        elif (cont % 2) == 0:
+            ind = pos(errs)
+            mejores2.append(pobla.pop(ind))
+            errs.pop(ind)
+            cont += 1
+    
+    return mejores1, mejores2
+
+#Función para encontrar la posicion del elemento menor en una lista
+def pos(lista):
+    temp = lista[0]
+    sub = 0
+    
+    for i in range(len(lista)):
+        if lista[i] < temp:
+            temp = lista[i]
+            sub = i    
+    return sub
 
 
-#Funcion para
 
+#Main
 def main():
     timeout = time.time() + 60*5   # 5 minutos desde ahora
 
@@ -92,9 +157,10 @@ def main():
         cinco, err = selec_indi(5, list(poblacion), list(errores))
 
         poblacion, err = selec_indi(len(poblacion)/2, list(poblacion), list(errores))
+        
 
         #llamar funcion para cruzar
-        cruce()
+        cruce(poblacion, err)
 
         
 
