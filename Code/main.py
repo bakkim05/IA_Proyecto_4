@@ -5,7 +5,7 @@ from random import randint
 def pobl_ini(poblacion):
     i = 0
     j = 0
-    for i in range(6):
+    for i in range(100):
         individuo = []
         for j in range(7):
             individuo.append(randint(-10, 10))
@@ -75,6 +75,7 @@ def main():
     while True:
         error = 0
         test = 0
+        errores = []
         if time.time() > timeout:
             break
 
