@@ -1,5 +1,6 @@
 import time
 from random import randint
+from read_file import *
 
 #Funcion de población inicial
 def pobl_ini(poblacion):
@@ -13,8 +14,14 @@ def pobl_ini(poblacion):
         j=0
 
 #Funcion para leer el archivo de datos
-def leer_csv():
-    print("datos leidos")
+def leer_csv(option):
+    if option==1:
+        datos = convert_F1()
+    elif option==2:
+        datos = convert_F2()
+    elif option==3:
+        datos = convert_F3()
+    return datos
 
 
 #Funcion para evaluar los datos en las funciones 
@@ -127,10 +134,10 @@ def main():
 
     poblacion = []
     
-    #funcion para cargar los datos del excel
-    leer_csv()
+    #funcion para cargar los datos del excel    
+    option = 1
 
-    datos = [[1,2], [2,5]]
+    datos = leer_csv(option)
 
     errores = []
 
@@ -149,8 +156,8 @@ def main():
         j = 0
         for i in range(len(poblacion)):
             for j in range(len(datos)):
-                error += eval_datos(datos[j], poblacion[i])
-            error = error/(len(datos))
+                error += eval_datos([datos[0][j], datos[1][j]], poblacion[i])
+            error = error/(len(datos[0]))
             errores.append(error)
         
 
