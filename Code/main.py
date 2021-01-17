@@ -1,6 +1,6 @@
 import time
 from random import randint
-from read_file import *
+from read_file import convert_F1,convert_F2,convert_F3
 
 #Funcion de población inicial
 def pobl_ini(poblacion):
@@ -27,13 +27,12 @@ def leer_csv(option):
 #Funcion para evaluar los datos en las funciones 
 def eval_datos(dat, pobl):
     y = pobl[0]* dat[0]**6 + pobl[1]* dat[0]**5 + pobl[2]* dat[0]**4 + pobl[3]* dat[0]**3 + pobl[4]* dat[0]**2 +pobl[5]* dat[0] + pobl[6]
-    err = (abs(y - dat[1])/dat[1])*100
+    err = (abs(y - dat[1])/dat[1])*500
     return err
 
 
 #Funcion para escoger los miembros mas aptos de la poblacion (50% del total)
 def selec_indi(cantidad, poblacion, errores):
-    print("Individuos seleccionados")
     mejores_indi = []
     mejores_err = []
 
@@ -142,47 +141,70 @@ def pos(lista):
 
 def main():
     timeout = time.time() + 60*5   # 5 minutos desde ahora
+    #timeout = time.time() + 10   # 10 segundos desde ahora
 
     poblacion = []
+
+    poblacion_anterior = []
+
+    gen = 0
     
     #funcion para cargar los datos del excel    
     option = 1
 
     datos = leer_csv(option)
 
-    errores = []
+    errores_generales = []
+    err_cinco = []
+    err_gen = []
+
+    generaciones = [[],[]]
 
     #llamar función poblacion inicial (crea arrelgo de arreglos)
     pobl_ini(poblacion)
 
+    
+    # Ciclo de ejecucion principal
     while True:
-        error = 0
-        test = 0
-        errores = []
-        if time.time() > timeout:
+        error = 0   
+        if time.time() > timeout: #or poblacion==poblacion_anterior:
+            print("Terminado", poblacion[0], err_gen[0])
             break
 
         #llamar funcion para evaluar datos del excel
         i = 0
         j = 0
+        errores_generales = []
+        err_cinco = []
+        err_gen = []
         for i in range(len(poblacion)):
             for j in range(len(datos)):
                 error += eval_datos([datos[0][j], datos[1][j]], poblacion[i])
             error = error/(len(datos[0]))
-            errores.append(error)
+            errores_generales.append(error)
         
+        poblacion_anterior = list(poblacion)
 
-        #llamar funcion para escoger 50% mejor 
-        cinco, err = selec_indi(5, list(poblacion), list(errores))
+        #llamar funcion para escoger 50% mejor
+        cinco, err_cinco = selec_indi(5, list(poblacion), list(errores_generales))
 
-        poblacion, err = selec_indi(len(poblacion)/2, list(poblacion), list(errores))
+        poblacion, err_gen = selec_indi(len(poblacion)/2, list(poblacion), list(errores_generales))
 
         #llamar funcion para cruzar
-        poblacion += cruce(list(poblacion), err)
+        poblacion += cruce(list(poblacion), list(err_gen))
 
-        print("Termina generacion")
-
+        gen += 1
         
+
+        print("Termina generacion ", gen)
+        if len(generaciones[0]) == 20:
+            generaciones[0].pop(0)
+            generaciones[1].pop(0)
+            generaciones[0].append(cinco)
+            generaciones[1].append(err_cinco)
+        else:
+            generaciones[0].append(cinco)
+            generaciones[1].append(err_cinco)
 
         
 main()
