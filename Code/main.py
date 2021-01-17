@@ -85,10 +85,21 @@ def cruce(x,y):
                     hijo1.append(madre[j+1])
                     hijo2.append(padre[j+1])
               
-        hijos.append(hijo1)
-        hijo1 = []
-        hijos.append(hijo2)
-        hijo2 = []
+        mutacion = randint(1,20)
+        if mutacion > 5 and mutacion < 10:
+            lugar = randint(0,6)
+            hijo1[lugar] = hijo1[lugar]*-1
+            hijo2[lugar] = hijo2[lugar]*2
+
+            hijos.append(hijo1)
+            hijo1 = []
+            hijos.append(hijo2)
+            hijo2 = []
+        else:
+            hijos.append(hijo1)
+            hijo1 = []
+            hijos.append(hijo2)
+            hijo2 = []
         
     return hijos
 
