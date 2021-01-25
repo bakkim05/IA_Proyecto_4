@@ -461,8 +461,7 @@ class GUI:
         mutacion = randint(1,100)
         if mutacion > 0 and mutacion < 6:
             lugar = randint(0,6)
-
-            hijo[lugar] = hijo[lugar]+hijo[lugar]*0.7
+            hijo[lugar] = round(hijo[lugar]+hijo[lugar]*0.7,3)
         
         return hijo
 
