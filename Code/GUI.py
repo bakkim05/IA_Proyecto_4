@@ -51,13 +51,13 @@ class GUI:
         self.button3 = Button(master, text = "Función 3", width = self.buttonWidth, height = self.buttonHeight, command = lambda: self.funcion3_pressed())
 
         #Labels
-        self.labelx0 = Label(master, text = "x_0", borderwidth = 2, relief = "ridge", background = "white", width = self.labelWidth, height = self.labelHeight)
-        self.labelx1 = Label(master, text = "x_1", borderwidth = 2, relief = "ridge", background = "white", width = self.labelWidth, height = self.labelHeight)
-        self.labelx2 = Label(master, text = "x_2", borderwidth = 2, relief = "ridge", background = "white", width = self.labelWidth, height = self.labelHeight)
-        self.labelx3 = Label(master, text = "x_3", borderwidth = 2, relief = "ridge", background = "white", width = self.labelWidth, height = self.labelHeight)
-        self.labelx4 = Label(master, text = "x_4", borderwidth = 2, relief = "ridge", background = "white", width = self.labelWidth, height = self.labelHeight)
-        self.labelx5 = Label(master, text = "x_5", borderwidth = 2, relief = "ridge", background = "white", width = self.labelWidth, height = self.labelHeight)
-        self.labelx6 = Label(master, text = "x_6", borderwidth = 2, relief = "ridge", background = "white", width = self.labelWidth, height = self.labelHeight)
+        self.labelx0 = Label(master, text = "x^6", borderwidth = 2, relief = "ridge", background = "white", width = self.labelWidth, height = self.labelHeight)
+        self.labelx1 = Label(master, text = "x^5", borderwidth = 2, relief = "ridge", background = "white", width = self.labelWidth, height = self.labelHeight)
+        self.labelx2 = Label(master, text = "x^4", borderwidth = 2, relief = "ridge", background = "white", width = self.labelWidth, height = self.labelHeight)
+        self.labelx3 = Label(master, text = "x^3", borderwidth = 2, relief = "ridge", background = "white", width = self.labelWidth, height = self.labelHeight)
+        self.labelx4 = Label(master, text = "x^2", borderwidth = 2, relief = "ridge", background = "white", width = self.labelWidth, height = self.labelHeight)
+        self.labelx5 = Label(master, text = "x^1", borderwidth = 2, relief = "ridge", background = "white", width = self.labelWidth, height = self.labelHeight)
+        self.labelx6 = Label(master, text = "x^0", borderwidth = 2, relief = "ridge", background = "white", width = self.labelWidth, height = self.labelHeight)
         
         self.porcentajeLabel = Label(master, text= "Porcentaje", borderwidth = 2, relief = "ridge", background = "white", width = self.labelWidth, height = self.labelHeight)
         self.porcentaje0 = Label(master, borderwidth = 2, relief = "ridge", background = "white", width = self.labelWidth, height = self.labelHeight)
@@ -217,13 +217,13 @@ class GUI:
         if (self.genText.get("1.0", "end-1c") == ""):
             return
 
-        if (int(self.genText.get("1.0", "end-1c")) < 0):
+        if (int(self.genText.get("1.0", "end-1c")) < 1):
             return
 
-        if (int(self.genText.get("1.0", "end-1c")) >= 20):
+        if (int(self.genText.get("1.0", "end-1c")) >= 21):
             return
 
-        generacion = int(self.genText.get("1.0", "end-1c"))
+        generacion = int(self.genText.get("1.0", "end-1c")) - 1
 
         #Insertar funcion de buscar generacion utilizando var [generacion]
 
@@ -349,10 +349,10 @@ class GUI:
     def pobl_ini(self, poblacion):
         i = 0
         j = 0
-        for i in range(100):
+        for i in range(60):
             individuo = []
             for j in range(7):
-                individuo.append(randint(-10, 10))
+                individuo.append(randint(-5, 5))
             poblacion.append(individuo)
             j=0
 
@@ -369,12 +369,12 @@ class GUI:
     #Funcion para evaluar los datos en las funciones 
     def eval_datos(self, dat, pobl):
         y = pobl[0]* dat[0]**6 + pobl[1]* dat[0]**5 + pobl[2]* dat[0]**4 + pobl[3]* dat[0]**3 + pobl[4]* dat[0]**2 +pobl[5]* dat[0] + pobl[6]
-        err = (abs(y - dat[1])/dat[1])*500
+        err = abs((dat[1] - y)/dat[1])*100
         return err
 
 
     #Funcion para escoger los miembros mas aptos de la poblacion (50% del total)
-    def selec_indi(slef, cantidad, poblacion, errores):
+    def selec_indi(self, cantidad, poblacion, errores):
         mejores_indi = []
         mejores_err = []
 
@@ -413,35 +413,59 @@ class GUI:
         
         n = len(padres)
 
+        tipo = randint(1,4)
+
         for i in range(n):
             padre = padres.pop(0)
             madre = madres.pop(0)
 
-            for j in range(len(padre)):
-                if (j % 2) == 0:
-                    hijo1.append(padre[j])
-                    hijo2.append(madre[j])
-                    if j != 6:
-                        hijo1.append(madre[j+1])
-                        hijo2.append(padre[j+1])
-                
-            mutacion = randint(1,20)
-            if mutacion > 5 and mutacion < 10:
-                lugar = randint(0,6)
-                hijo1[lugar] = hijo1[lugar]*-1
-                hijo2[lugar] = hijo2[lugar]*2
+            if tipo == 1: #intercambio de coeficientes
+                for j in range(len(padre)):
+                    if (j % 2) == 0:
+                        hijo1.append(padre[j])
+                        hijo2.append(madre[j])
+                        if j != 6:
+                            hijo1.append(madre[j+1])
+                            hijo2.append(padre[j+1])
+            
+            elif tipo == 2: #suma de coeficientes y resta de coeficientes
+                for j in range(len(padre)):
+                    hijo1.append(padre[j]+madre[j])
+                    hijo2.append(padre[j]-madre[j])
 
-                hijos.append(hijo1)
-                hijo1 = []
-                hijos.append(hijo2)
-                hijo2 = []
-            else:
-                hijos.append(hijo1)
-                hijo1 = []
-                hijos.append(hijo2)
-                hijo2 = []
+            
+            elif tipo == 3: #promedio de los 2
+                for j in range(len(padre)):
+                    round((padre[j]+madre[j])*0.7,3)
+                    hijo1.append(round((padre[j]+madre[j])/2,3))
+                    hijo2.append(round((padre[j]-madre[j])/2,3))
+
+
+            elif tipo == 4: #1 +- 2 * 0.7
+                for j in range(len(padre)):
+                    hijo1.append(round((padre[j]+madre[j])*0.7,3))
+                    hijo2.append(round((padre[j]-madre[j])*0.7,3))
+            
+            hijo1 = self.mutacion(hijo1)
+            hijo2 = self.mutacion(hijo2)
+            
+            hijos.append(hijo1)
+            hijo1 = []
+            hijos.append(hijo2)
+            hijo2 = []
+            
             
         return hijos
+
+    def mutacion(self, hijo):
+        mutacion = randint(1,100)
+        if mutacion > 0 and mutacion < 6:
+            lugar = randint(0,6)
+
+            hijo[lugar] = hijo[lugar]+hijo[lugar]*0.7
+        
+        return hijo
+
 
     #Funcion para separar la población en padres y madres
     def padres_madres(self, pobla, errs):
@@ -478,11 +502,57 @@ class GUI:
         return sub
 
     def comenzar(self):
+        self.labelv0b0["text"] = ""
+        self.labelv1b0["text"] = ""
+        self.labelv2b0["text"] = ""
+        self.labelv3b0["text"] = ""
+        self.labelv4b0["text"] = ""
+        self.labelv5b0["text"] = ""
+        self.labelv6b0["text"] = ""
+
+        self.labelv0b1["text"] = ""
+        self.labelv1b1["text"] = ""
+        self.labelv2b1["text"] = ""
+        self.labelv3b1["text"] = ""
+        self.labelv4b1["text"] = ""
+        self.labelv5b1["text"] = ""
+        self.labelv6b1["text"] = ""
+
+        self.labelv0b2["text"] = ""
+        self.labelv1b2["text"] = ""
+        self.labelv2b2["text"] = ""
+        self.labelv3b2["text"] = ""
+        self.labelv4b2["text"] = ""
+        self.labelv5b2["text"] = ""
+        self.labelv6b2["text"] = ""
+
+        self.labelv0b3["text"] = ""
+        self.labelv1b3["text"] = ""
+        self.labelv2b3["text"] = ""
+        self.labelv3b3["text"] = ""
+        self.labelv4b3["text"] = ""
+        self.labelv5b3["text"] = ""
+        self.labelv6b3["text"] = ""
+
+        self.labelv0b4["text"] = ""
+        self.labelv1b4["text"] = ""
+        self.labelv2b4["text"] = ""
+        self.labelv3b4["text"] = ""
+        self.labelv4b4["text"] = ""
+        self.labelv5b4["text"] = ""
+        self.labelv6b4["text"] = ""
+
+        self.porcentaje0["text"] = ""
+        self.porcentaje1["text"] = ""
+        self.porcentaje2["text"] = ""
+        self.porcentaje3["text"] = ""
+        self.porcentaje4["text"] = ""
+
         if (self.state == 0):
             return 
 
-        #timeout = time.time() + 60*5   # 5 minutos desde ahora
-        timeout = time.time() + 2   # 10 segundos desde ahora
+        timeout = time.time() + 60*5   # 5 minutos desde ahora
+        #timeout = time.time() + 10   # 10 segundos desde ahora
 
         poblacion = []
 
@@ -491,13 +561,11 @@ class GUI:
         gen = 0
         
         #funcion para cargar los datos del excel    
-        option = 1
 
         datos = self.leer_csv()
 
         errores_generales = []
-        err_cinco = []
-        err_gen = []
+        err_gen = [1000]
         
         self.last20 = [[],[]]
 
@@ -508,7 +576,7 @@ class GUI:
         # Ciclo de ejecucion principal
         while True:
             error = 0   
-            if gen > 21: #time.time() > timeout: #or poblacion==poblacion_anterior:
+            if time.time() > timeout or (err_gen[0] <= 0.05 and err_gen[0] > 0): #or poblacion==poblacion_anterior:
                 print("Terminado", poblacion[0], err_gen[0])
                 break
 
@@ -516,7 +584,6 @@ class GUI:
             i = 0
             j = 0
             errores_generales = []
-            err_cinco = []
             err_gen = []
             for i in range(len(poblacion)):
                 for j in range(len(datos)):
@@ -527,12 +594,16 @@ class GUI:
             poblacion_anterior = list(poblacion)
 
             #llamar funcion para escoger 50% mejor
-            self.generation, self.porcentaje = self.selec_indi(5, list(poblacion), list(errores_generales))
+            #self.generation, self.porcentaje = self.selec_indi(5, list(poblacion), list(errores_generales))
 
             poblacion, err_gen = self.selec_indi(len(poblacion)/2, list(poblacion), list(errores_generales))
 
             #llamar funcion para cruzar
             poblacion += self.cruce(list(poblacion), list(err_gen))
+
+            poblacion, err_gen = self.selec_indi(len(poblacion), list(poblacion), list(errores_generales))
+
+            self.generation, self.porcentaje = self.selec_indi(5, list(poblacion), list(err_gen))
 
             gen += 1
             

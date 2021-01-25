@@ -95,7 +95,7 @@ def convert_F3():
     new_Y = []
     array = read_F3()
     array_X = array[0]
-    array_Y = array[0]
+    array_Y = array[1]
     
     for column in array_X:
         new_X.append(float(column))
